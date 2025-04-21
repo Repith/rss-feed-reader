@@ -1,21 +1,49 @@
-import { MongoClient, Db } from 'mongodb';
+import { MongoClient, Db, ServerApiVersion } from "mongodb";
 
-const uri = process.env.MONGODB_URI || 'mongodb://admin:password@localhost:27017';
-const dbName = process.env.MONGODB_DB_NAME || 'rss-reader';
+const uri =
+  process.env.MONGODB_URI || "mongodb://localhost:27017";
+const dbName = process.env.MONGODB_DB_NAME || "rss-reader";
+
+if (!uri) {
+  throw new Error(
+    "Please define the MONGODB_URI environment variable inside .env.local"
+  );
+}
 
 let cachedClient: MongoClient | null = null;
 let cachedDb: Db | null = null;
 
-export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
+export async function connectToDatabase(): Promise<{
+  client: MongoClient;
+  db: Db;
+}> {
   if (cachedClient && cachedDb) {
     return { client: cachedClient, db: cachedDb };
   }
 
-  const client = await MongoClient.connect(uri);
-  const db = client.db(dbName);
+  try {
+    const client = await MongoClient.connect(uri, {
+      serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+      },
+    });
 
-  cachedClient = client;
-  cachedDb = db;
+    const db = client.db(dbName);
 
-  return { client, db };
+    await db.command({ ping: 1 });
+    console.log("Connected successfully to MongoDB Atlas");
+
+    cachedClient = client;
+    cachedDb = db;
+
+    return { client, db };
+  } catch (error) {
+    console.error(
+      "Failed to connect to MongoDB Atlas:",
+      error
+    );
+    throw error;
+  }
 }
