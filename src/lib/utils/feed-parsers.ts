@@ -10,7 +10,6 @@ export function parseAtomFeed(url: string, xmlContent: string): {
   const dom = new JSDOM(xmlContent, { contentType: 'text/xml' });
   const doc = dom.window.document;
   
-  // Extract feed information
   const feedTitle = doc.querySelector('feed > title')?.textContent || 'Unnamed Feed';
   const feedDescription = doc.querySelector('feed > subtitle')?.textContent || '';
   
@@ -21,7 +20,6 @@ export function parseAtomFeed(url: string, xmlContent: string): {
     lastFetched: new Date(),
   };
   
-  // Extract entries
   const entries = Array.from(doc.querySelectorAll('entry') || []);
   
   if (!entries.length) {
@@ -131,11 +129,9 @@ export function createFallbackArticle(url: string, content?: string): Omit<Artic
     feedId: "",
     title: "Content from " + new URL(url).hostname,
     content: content || "Could not parse content from this feed. Please check the URL.",
-    snippet: "Could not parse content from this feed. Please check the URL.",
     link: url,
     publishedAt: new Date(),
     author: "",
-    imageUrl: null,
     isRead: false,
     isFavorite: false,
   }];

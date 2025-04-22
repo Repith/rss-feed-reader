@@ -1,4 +1,4 @@
-import { MongoClient, Db, ObjectId } from "mongodb";
+import {  ObjectId } from "mongodb";
 import { connectToDatabase } from "../database/mongodb";
 import { hash, compare } from "bcryptjs";
 import { sign, verify } from "jsonwebtoken";

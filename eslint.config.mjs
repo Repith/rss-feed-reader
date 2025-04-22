@@ -24,11 +24,13 @@ const eslintConfig = [
         {
           argsIgnorePattern: "^_",
           varsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_|^(err|error|e)$",
         },
       ],
       "@typescript-eslint/explicit-module-boundary-types":
         "off",
-      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-explicit-any": "off", // Disable any warnings
       "no-console": ["warn", { allow: ["warn", "error"] }],
     },
   },

@@ -5,7 +5,7 @@ import { ArticleRepository } from "@/src/domain/repositories/ArticleRepository";
 export class ArticleService {
   constructor(private articleRepository: ArticleRepository) {}
 
-  async getAllArticles(options?: { limit?: number; offset?: number; sort?: string }): Promise<Article[]> {
+  async getAllArticles(options?: { limit?: number; offset?: number }): Promise<Article[]> {
     return this.articleRepository.findAll(options);
   }
 
@@ -13,37 +13,33 @@ export class ArticleService {
     return this.articleRepository.findById(id);
   }
 
-  async getArticlesByFeedId(feedId: string, options?: { limit?: number; offset?: number }): Promise<Article[]> {
-    return this.articleRepository.findByFeedId(feedId, options);
+  async getArticlesByFeedId(feedId: string): Promise<Article[]> {
+    return this.articleRepository.findByFeedId(feedId);
   }
 
-  async getUnreadArticles(options?: { limit?: number; offset?: number }): Promise<Article[]> {
-    return this.articleRepository.findUnread(options);
+  async getUnreadArticles(): Promise<Article[]> {
+    return this.articleRepository.findUnread();
   }
 
-  async getFavoriteArticles(options?: { limit?: number; offset?: number }): Promise<Article[]> {
-    return this.articleRepository.findFavorites(options);
+  async getFavoriteArticles(): Promise<Article[]> {
+    return this.articleRepository.findFavorites();
   }
 
-  async searchArticles(query: string, options?: { limit?: number; offset?: number }): Promise<Article[]> {
-    return this.articleRepository.search(query, options);
+  async searchArticles(query: string): Promise<Article[]> {
+    return this.articleRepository.search(query);
+  }
+
+  async createArticle(article: Omit<Article, 'id' | 'createdAt'>): Promise<Article> {
+    return this.articleRepository.create(article);
   }
 
   async markAsRead(id: string, isRead: boolean): Promise<Article | null> {
-    const article = await this.articleRepository.markAsRead(id, isRead);
-    return article;
+    return this.articleRepository.markAsRead(id, isRead);
   }
 
   async markAsFavorite(id: string, isFavorite: boolean): Promise<Article | null> {
-    const article = await this.articleRepository.markAsFavorite(id, isFavorite);
-    return article;
-  }
-
-  async markAllAsRead(feedId?: string): Promise<void> {
-    return this.articleRepository.markAllAsRead(feedId);
-  }
-
-  async getArticleCount(filter?: { feedId?: string; unreadOnly?: boolean }): Promise<number> {
-    return this.articleRepository.getCount(filter);
+    return this.articleRepository.markAsFavorite(id, isFavorite);
   }
 }
+
+

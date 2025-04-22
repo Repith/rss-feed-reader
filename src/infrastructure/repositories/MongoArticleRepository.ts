@@ -36,7 +36,7 @@ export class MongoArticleRepository
       ...article,
       id: article._id.toString(),
       _id: undefined,
-    })) as Article[];
+    })) as unknown as Article[];
   }
 
   async findByFeedId(feedId: string): Promise<Article[]> {
@@ -51,7 +51,7 @@ export class MongoArticleRepository
       ...article,
       id: article._id.toString(),
       _id: undefined,
-    })) as Article[];
+    })) as unknown as Article[];
   }
 
   async search(query: string): Promise<Article[]> {
@@ -66,22 +66,28 @@ export class MongoArticleRepository
       ...article,
       id: article._id.toString(),
       _id: undefined,
-    })) as Article[];
+    })) as unknown as Article[];
   }
 
   async findById(id: string): Promise<Article | null> {
     const { db } = await connectToDatabase();
-    const article = await db
-      .collection<MongoArticle>(this.collectionName)
-      .findOne({ _id: new ObjectId(id) });
-
-    if (!article) return null;
-
-    return {
-      ...article,
-      id: article._id.toString(),
-      _id: undefined,
-    } as Article;
+    
+    try {
+      const article = await db
+        .collection<MongoArticle>(this.collectionName)
+        .findOne({ _id: new ObjectId(id) });
+      
+      if (!article) return null;
+      
+      return {
+        ...article,
+        id: article._id.toString(),
+        _id: undefined,
+      } as unknown as Article;
+    } catch (err) {
+      console.error(`Failed to find article with id ${id}:`, err);
+      return null;
+    }
   }
 
   async findUnread(options?: {
@@ -108,7 +114,7 @@ export class MongoArticleRepository
       ...article,
       id: article._id.toString(),
       _id: undefined,
-    })) as Article[];
+    })) as unknown as Article[];
   }
 
   async findFavorites(options?: {
@@ -135,7 +141,7 @@ export class MongoArticleRepository
       ...article,
       id: article._id.toString(),
       _id: undefined,
-    })) as Article[];
+    })) as unknown as Article[];
   }
 
   async create(article: Omit<Article, 'id' | 'createdAt'>): Promise<Article> {
@@ -177,7 +183,7 @@ export class MongoArticleRepository
       ...result,
       id: result._id.toString(),
       _id: undefined,
-    } as Article;
+    } as unknown as Article;
   }
 
   async markAsFavorite(id: string, isFavorite: boolean): Promise<Article | null> {
@@ -197,7 +203,7 @@ export class MongoArticleRepository
       ...result,
       id: result._id.toString(),
       _id: undefined,
-    } as Article;
+    }  as unknown as Article;
   }
 
   async markAllAsRead(feedId?: string): Promise<void> {

@@ -18,7 +18,8 @@ export async function POST(request: Request) {
     }
     
     return NextResponse.json(article);
-  } catch (error) {
+  } catch (err) {
+    console.error('Failed to update article:', err);
     return NextResponse.json({ error: 'Failed to update article' }, { status: 500 });
   }
 }
@@ -27,7 +28,8 @@ export async function GET() {
   try {
     const articles = await articleService.getFavoriteArticles();
     return NextResponse.json(articles);
-  } catch (error) {
+  } catch (err) {
+    console.error('Failed to fetch favorite articles:', err);
     return NextResponse.json({ error: 'Failed to fetch favorite articles' }, { status: 500 });
   }
 }

@@ -63,12 +63,12 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-4xl p-4">
+    <div className="container max-w-4xl p-4 mx-auto">
       <h1 className="mb-6 text-2xl font-bold">
         Your RSS Feeds
       </h1>
 
-      <div className="mb-8 rounded-lg border p-4 shadow-sm">
+      <div className="p-4 mb-8 border rounded-lg shadow-sm">
         <h2 className="mb-4 text-lg font-medium">
           Add New Feed
         </h2>
@@ -81,13 +81,13 @@ export default function DashboardPage() {
             value={newFeedUrl}
             onChange={(e) => setNewFeedUrl(e.target.value)}
             placeholder="Enter RSS feed URL"
-            className="flex-1 rounded-md border border-gray-300 p-2 dark:border-gray-700 dark:bg-gray-800"
+            className="flex-1 p-2 border border-gray-300 rounded-md dark:border-gray-700 dark:bg-gray-800"
             required
           />
           <button
             type="submit"
             disabled={addFeedMutation.isPending}
-            className="rounded-md bg-primary-600 px-4 py-2 text-white hover:bg-primary-700 disabled:opacity-70"
+            className="px-4 py-2 text-white rounded-md bg-primary-600 hover:bg-primary-700 disabled:opacity-70"
           >
             {addFeedMutation.isPending
               ? "Adding..."
@@ -104,9 +104,9 @@ export default function DashboardPage() {
       {isLoading ? (
         <div className="text-center">Loading feeds...</div>
       ) : feeds?.length === 0 ? (
-        <div className="rounded-lg border p-8 text-center">
+        <div className="p-8 text-center border rounded-lg">
           <p className="text-lg">
-            You don't have any feeds yet.
+            You don&apos;t have any feeds yet.
           </p>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
             Add your first RSS feed above to get started.
@@ -117,7 +117,7 @@ export default function DashboardPage() {
           {feeds?.map((feed) => (
             <div
               key={feed.id}
-              className="flex flex-col rounded-lg border p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col p-4 border rounded-lg shadow-sm sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="mb-3 sm:mb-0">
                 <h3 className="font-medium">
@@ -130,7 +130,7 @@ export default function DashboardPage() {
               <div className="flex gap-2">
                 <Link
                   href={`/dashboard/feeds/${feed.id}`}
-                  className="rounded-md bg-primary-100 px-3 py-1 text-sm text-primary-800 hover:bg-primary-200 dark:bg-primary-900/30 dark:text-primary-300"
+                  className="px-3 py-1 text-sm rounded-md bg-primary-100 text-primary-800 hover:bg-primary-200 dark:bg-primary-900/30 dark:text-primary-300"
                 >
                   View Articles
                 </Link>
@@ -139,7 +139,7 @@ export default function DashboardPage() {
                     refreshFeedMutation.mutate(feed.id)
                   }
                   disabled={refreshFeedMutation.isPending}
-                  className="rounded-md bg-gray-100 px-3 py-1 text-sm hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                  className="px-3 py-1 text-sm bg-gray-100 rounded-md hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
                 >
                   Refresh
                 </button>
@@ -148,7 +148,7 @@ export default function DashboardPage() {
                     deleteFeedMutation.mutate(feed.id)
                   }
                   disabled={deleteFeedMutation.isPending}
-                  className="rounded-md bg-red-100 px-3 py-1 text-sm text-red-800 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300"
+                  className="px-3 py-1 text-sm text-red-800 bg-red-100 rounded-md hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300"
                 >
                   Delete
                 </button>

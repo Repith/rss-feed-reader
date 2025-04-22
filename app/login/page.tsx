@@ -28,8 +28,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8 rounded-lg border p-6 shadow-md">
+    <div className="flex items-center justify-center min-h-screen p-4">
+      <div className="w-full max-w-md p-6 space-y-8 border rounded-lg shadow-md">
         <div className="text-center">
           <h1 className="text-2xl font-bold">Login</h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
@@ -38,7 +38,7 @@ export default function LoginPage() {
         </div>
 
         {error && (
-          <div className="rounded-md bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
+          <div className="p-4 text-sm text-red-700 rounded-md bg-red-50 dark:bg-red-900/30 dark:text-red-400">
             {error}
           </div>
         )}
@@ -60,7 +60,7 @@ export default function LoginPage() {
                 name="email"
                 type="email"
                 required
-                className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+                className="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-800"
                 placeholder="you@example.com"
               />
             </div>
@@ -76,7 +76,7 @@ export default function LoginPage() {
                 name="password"
                 type="password"
                 required
-                className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+                className="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-800"
               />
             </div>
           </div>
@@ -84,13 +84,13 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-primary-600 py-2 text-white hover:bg-primary-700 disabled:opacity-70"
+            className="w-full py-2 text-white rounded-md bg-primary-600 hover:bg-primary-700 disabled:opacity-70"
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>
 
-          <div className="text-center text-sm">
-            Don't have an account?{" "}
+          <div className="text-sm text-center">
+            Don&apos;t have an account?{" "}
             <Link
               href="/signup"
               className="text-primary-600 hover:underline"

@@ -40,7 +40,7 @@ export class RssParserService {
       try {
         const parsedFeed = await this.parser.parseURL(url);
         return this.processParsedFeed(url, parsedFeed);
-      } catch (directError) {
+      } catch (_) {
         const response = await axios.get(url, {
           headers: {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -72,7 +72,7 @@ export class RssParserService {
       }
       
       return this.processParsedFeed(url, parsedFeed);
-    } catch (parseError) {
+    } catch (_) {
       if (xmlContent.includes('<feed') && xmlContent.includes('xmlns="http://www.w3.org/2005/Atom"')) {
         return parseAtomFeed(url, xmlContent);
       } else if (xmlContent.includes('<rss') || xmlContent.includes('<channel')) {
@@ -101,7 +101,7 @@ export class RssParserService {
       try {
         const mediaContent = item["media:content"] || item.enclosure;
         imageUrl = mediaContent?.url || mediaContent?.$.url || null;
-      } catch (e) {
+      } catch (_) {
       }
 
       const rawContent = item['content:encoded'] ?? item.content ?? item.description ?? '';

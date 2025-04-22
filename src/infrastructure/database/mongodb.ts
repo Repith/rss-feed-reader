@@ -33,8 +33,7 @@ export async function connectToDatabase(): Promise<{
     const db = client.db(dbName);
 
     await db.command({ ping: 1 });
-    console.log("Connected successfully to MongoDB Atlas");
-
+    
     cachedClient = client;
     cachedDb = db;
 

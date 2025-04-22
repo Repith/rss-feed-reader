@@ -33,8 +33,8 @@ export default function FavoritesPage() {
   });
 
   return (
-    <div className="container mx-auto max-w-4xl p-4">
-      <div className="mb-6 flex items-center gap-4">
+    <div className="container max-w-4xl p-4 mx-auto">
+      <div className="flex items-center gap-4 mb-6">
         <Link
           href="/dashboard"
           className="text-sm text-gray-600 hover:underline dark:text-gray-400"
@@ -51,9 +51,9 @@ export default function FavoritesPage() {
           Loading favorites...
         </div>
       ) : articles?.length === 0 ? (
-        <div className="rounded-lg border p-8 text-center">
+        <div className="p-8 text-center border rounded-lg">
           <p className="text-lg">
-            You don't have any favorite articles yet.
+            You don&apos;t have any favorite articles yet.
           </p>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
             Mark articles as favorites to see them here.
@@ -64,13 +64,13 @@ export default function FavoritesPage() {
           {articles?.map((article) => (
             <div
               key={article.id}
-              className="rounded-lg border p-4 shadow-sm"
+              className="p-4 border rounded-lg shadow-sm"
             >
-              <div className="mb-2 flex items-center justify-between">
+              <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-gray-600 dark:text-gray-400">
-                  {article.publishDate
+                  {article.publishedAt
                     ? format(
-                        new Date(article.publishDate),
+                        new Date(article.publishedAt),
                         "MMM d, yyyy"
                       )
                     : "No date"}
@@ -91,9 +91,9 @@ export default function FavoritesPage() {
                 {article.title}
               </h2>
               <p className="mb-4 text-gray-700 dark:text-gray-300">
-                {article.description?.substring(0, 200)}
-                {article.description &&
-                article.description.length > 200
+                {article.content?.substring(0, 200)}
+                {article.content &&
+                article.content.length > 200
                   ? "..."
                   : ""}
               </p>
@@ -101,7 +101,7 @@ export default function FavoritesPage() {
                 href={article.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block rounded-md bg-primary-600 px-4 py-2 text-white hover:bg-primary-700"
+                className="inline-block px-4 py-2 text-white rounded-md bg-primary-600 hover:bg-primary-700"
               >
                 Read Article
               </a>

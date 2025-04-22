@@ -82,7 +82,7 @@ export class MongoFeedRepository implements FeedRepository {
       ...result,
       id: result._id.toString(),
       _id: undefined,
-    } as Feed;
+    } as unknown as Feed;
   }
 
   async delete(id: string): Promise<boolean> {
