@@ -19,7 +19,7 @@ export async function GET() {
     return NextResponse.json(feeds);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch feeds" },
+      { error: `Failed to fetch feeds, error: ${error}` },
       { status: 500 }
     );
   }
@@ -35,11 +35,19 @@ export async function POST(request: Request) {
       );
     }
 
-    const feed = await feedService.addFeed(url);
-    return NextResponse.json(feed, { status: 201 });
+    try {
+      const feed = await feedService.addFeed(url);
+      return NextResponse.json(feed, { status: 201 });
+    } catch (feedError) {
+      return NextResponse.json(
+        { error: (feedError as Error)?.message || "Failed to add feed" },
+        { status: 422 }
+      );
+    }
   } catch (error) {
+    console.error("Server error:", error);
     return NextResponse.json(
-      { error: "Failed to add feed" },
+      { error: "Server error processing request" },
       { status: 500 }
     );
   }

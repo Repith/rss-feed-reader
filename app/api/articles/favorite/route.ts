@@ -1,6 +1,6 @@
+import { ArticleService } from '@/src/application/services/ArticleService';
+import { MongoArticleRepository } from '@/src/infrastructure/repositories/MongoArticleRepository';
 import { NextResponse } from 'next/server';
-import { ArticleService } from '@/application/services/ArticleService';
-import { MongoArticleRepository } from '@/infrastructure/repositories/MongoArticleRepository';
 
 const articleRepository = new MongoArticleRepository();
 const articleService = new ArticleService(articleRepository);

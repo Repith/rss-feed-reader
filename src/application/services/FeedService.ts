@@ -1,6 +1,4 @@
 import { Feed } from "@/src/domain/models/Feed";
-import { ArticleRepository } from "@/src/domain/repositories/ArticleRepository";
-import { FeedRepository } from "@/src/domain/repositories/FeedRepository";
 import { MongoArticleRepository } from "@/src/infrastructure/repositories/MongoArticleRepository";
 import { MongoFeedRepository } from "@/src/infrastructure/repositories/MongoFeedRepository";
 import { RssParserService } from "@/src/infrastructure/services/RssParserService";
@@ -21,24 +19,39 @@ export class FeedService {
   }
 
   async addFeed(url: string): Promise<Feed> {
-    const { feed, articles } =
-      await this.rssParserService.parseFeed(url);
+    try {
+      // Normalize URL (add https:// if missing)
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+      }
+      
+      const { feed, articles } = await this.rssParserService.parseFeed(url);
 
-    const createdFeed = await this.feedRepository.create({
-      url,
-      title: feed.title || "Unnamed Feed",
-      description: feed.description,
-      lastFetched: new Date(),
-    });
-
-    for (const article of articles) {
-      await this.articleRepository.create({
-        ...article,
-        feedId: createdFeed.id,
+      const createdFeed = await this.feedRepository.create({
+        url,
+        title: feed.title || "Unnamed Feed",
+        description: feed.description || "",
+        lastFetched: new Date(),
       });
-    }
 
-    return createdFeed;
+      const batchSize = 20;
+      for (let i = 0; i < articles.length; i += batchSize) {
+        const batch = articles.slice(i, i + batchSize);
+        await Promise.all(
+          batch.map(article => 
+            this.articleRepository.saveArticle({
+              ...article,
+              feedId: createdFeed.id,
+            })
+          )
+        );
+      }
+
+      return createdFeed;
+    } catch (error) {
+      console.error("Error in addFeed:", error);
+      throw new Error(`Failed to add feed: ${(error as Error).message || 'Unknown error'}`);
+    }
   }
 
   async updateFeed(
