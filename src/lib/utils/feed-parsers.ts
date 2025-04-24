@@ -3,7 +3,7 @@ import { Feed } from "@/src/domain/models/Feed";
 import { JSDOM } from 'jsdom';
 import { processContent } from './html';
 
-export function parseAtomFeed(url: string, xmlContent: string): {
+export function parseAtomFeed(url: string, xmlContent: string, userId?: string): {
   feed: Partial<Feed>;
   articles: Omit<Article, "id" | "createdAt">[];
 } {
@@ -41,6 +41,7 @@ export function parseAtomFeed(url: string, xmlContent: string): {
     
     return {
       feedId: '',
+      userId: userId || '',
       title,
       content: sanitizedHtml, 
       snippet: plainText.slice(0, 400), 
@@ -56,7 +57,7 @@ export function parseAtomFeed(url: string, xmlContent: string): {
   return { feed, articles };
 }
 
-export function parseRssFeed(url: string, xmlContent: string): {
+export function parseRssFeed(url: string, xmlContent: string, userId?: string): {
   feed: Partial<Feed>;
   articles: Omit<Article, "id" | "createdAt">[];
 } {
@@ -105,6 +106,7 @@ export function parseRssFeed(url: string, xmlContent: string): {
     
     return {
       feedId: '',
+      userId: userId || '',
       title,
       content: sanitizedHtml,
       snippet: plainText.slice(0, 400), 
@@ -125,6 +127,7 @@ export function createFallbackArticle(url: string, content?: string): Omit<Artic
   
   return [{
     feedId: "",
+    userId: "", 
     title: "Content from " + new URL(url).hostname,
     content: content || "Could not parse content from this feed. Please check the URL.",
     snippet: plainText.slice(0, 400), 
@@ -135,6 +138,9 @@ export function createFallbackArticle(url: string, content?: string): Omit<Artic
     isFavorite: false,
   }];
 }
+
+
+
 
 
 

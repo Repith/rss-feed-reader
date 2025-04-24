@@ -25,7 +25,7 @@ export class FeedService {
         url = 'https://' + url;
       }
       
-      const { feed, articles } = await this.rssParserService.parseFeed(url);
+      const { feed, articles } = await this.rssParserService.parseFeed(url, userId);
 
       const createdFeed = await this.feedRepository.create({
         url,
@@ -69,7 +69,7 @@ export class FeedService {
     if (!feed) return null;
 
     const { articles } =
-      await this.rssParserService.parseFeed(feed.url);
+      await this.rssParserService.parseFeed(feed.url, userId);
 
     for (const article of articles) {
       await this.articleRepository.saveArticle({

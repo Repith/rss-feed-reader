@@ -32,14 +32,14 @@ export class RssParserService {
     });
   }
 
-  async parseFeed(url: string): Promise<{
+  async parseFeed(url: string, userId?: string): Promise<{
     feed: Partial<Feed>;
     articles: Omit<Article, "id" | "createdAt">[];
   }> {
     try {
       try {
         const parsedFeed = await this.parser.parseURL(url);
-        return this.processParsedFeed(url, parsedFeed);
+        return this.processParsedFeed(url, parsedFeed, userId);
       } catch (_) {
         const response = await axios.get(url, {
           headers: {
@@ -55,7 +55,7 @@ export class RssParserService {
           throw new Error(`HTTP error: ${response.status}`);
         }
         
-        return this.parseXmlContent(url, response.data);
+        return this.parseXmlContent(url, response.data, userId);
       }
     } catch (error) {
       console.error("Error parsing RSS feed:", error);
@@ -63,7 +63,7 @@ export class RssParserService {
     }
   }
   
-  private async parseXmlContent(url: string, xmlContent: string) {
+  private async parseXmlContent(url: string, xmlContent: string, userId?: string) {
     try {
       const parsedFeed = await this.parser.parseString(xmlContent);
       
@@ -71,21 +71,21 @@ export class RssParserService {
         throw new Error('Invalid feed format: Feed object is missing');
       }
       
-      return this.processParsedFeed(url, parsedFeed);
+      return this.processParsedFeed(url, parsedFeed, userId);
     } catch (_) {
       if (xmlContent.includes('<feed') && xmlContent.includes('xmlns="http://www.w3.org/2005/Atom"')) {
-        return parseAtomFeed(url, xmlContent);
+        return parseAtomFeed(url, xmlContent, userId);
       } else if (xmlContent.includes('<rss') || xmlContent.includes('<channel')) {
-        return parseRssFeed(url, xmlContent);
+        return parseRssFeed(url, xmlContent, userId);
       } else if (xmlContent.includes('<?xml')) {
-        return this.processGenericXmlFeed(url, xmlContent);
+        return this.processGenericXmlFeed(url, xmlContent, userId);
       } else {
-        return this.extractFallbackContent(url, xmlContent);
+        return this.extractFallbackContent(url, xmlContent, userId);
       }
     }
   }
   
-  private processParsedFeed(url: string, parsedFeed: Parser.Output<any>): {
+  private processParsedFeed(url: string, parsedFeed: Parser.Output<any>, userId?: string): {
     feed: Partial<Feed>;
     articles: Omit<Article, "id" | "createdAt">[];
   } {
@@ -110,9 +110,10 @@ export class RssParserService {
 
       return {
         feedId: "",
+        userId: userId || "",
         title: item.title || "Untitled",
         content: sanitizedHtml,
-        snippet: plainText.slice(0, 400), // Create a 400 character snippet
+        snippet: plainText.slice(0, 400),
         link: item.link || "",
         publishedAt: item.pubDate ? new Date(item.pubDate) : new Date(),
         author: item.creator || item.author || (item.dc && item.dc.creator) || "",
@@ -125,12 +126,12 @@ export class RssParserService {
     return { feed, articles };
   }
   
-  private processGenericXmlFeed(url: string, xmlContent: string) {
+  private processGenericXmlFeed(url: string, xmlContent: string, userId?: string) {
     try {
       if (xmlContent.includes('<channel>')) {
-        return parseRssFeed(url, xmlContent);
+        return parseRssFeed(url, xmlContent, userId);
       } else if (xmlContent.includes('<feed')) {
-        return parseAtomFeed(url, xmlContent);
+        return parseAtomFeed(url, xmlContent, userId);
       }
       
       const dom = new JSDOM(xmlContent, { contentType: 'text/xml' });
@@ -178,9 +179,10 @@ export class RssParserService {
         
         return {
           feedId: '',
+          userId: userId || '', 
           title,
           content: sanitizedHtml,
-          snippet: plainText.slice(0, 400), // Create a 400 character snippet
+          snippet: plainText.slice(0, 400),
           link,
           publishedAt: pubDate ? new Date(pubDate) : new Date(),
           author,
@@ -199,7 +201,7 @@ export class RssParserService {
     }
   }
 
-  private extractFallbackContent(url: string, content: string) {
+  private extractFallbackContent(url: string, content: string, userId?: string) {
     try {
       const dom = new JSDOM(content);
       const doc = dom.window.document;
@@ -231,6 +233,7 @@ export class RssParserService {
           
           articles.push({
             feedId: '',
+            userId: userId || '', // Add userId field
             title: articleTitle,
             content: sanitizedHtml,
             snippet: plainText.slice(0, 400), 
@@ -252,6 +255,7 @@ export class RssParserService {
           
           articles.push({
             feedId: '',
+            userId: userId || '', // Add userId field
             title,
             content: sanitizedHtml,
             snippet: plainText.slice(0, 400),
