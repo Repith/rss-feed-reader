@@ -2,33 +2,50 @@
 
 A modern RSS reader application built with Next.js, React, and MongoDB.
 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Next.js](https://img.shields.io/badge/Next.js-15.3.0-black)
+![React](https://img.shields.io/badge/React-19.0.0-blue)
+![MongoDB](https://img.shields.io/badge/MongoDB-6.15.0-green)
+
+## Demo
+
+Check out the live demo: [RSS Reader](https://rss-feed-reader-beta.vercel.app)
+
 ## Features
 
-- **Feed Management**: Add, organize, and manage your RSS feeds
-- **Article Reading**: Clean reading experience for your subscribed content
+- **Feed Management**: Add, organize, and categorize your RSS feeds
+- **Article Reading**: Clean, distraction-free reading experience for your subscribed content
+- **Content Processing**: Intelligent parsing of various feed formats (RSS, Atom, XML)
+- **Search**: Full-text search across all your articles
 - **Favorites**: Save articles to read later
-- **Responsive Design**: Works on desktop and mobile devices
+- **Read Status Tracking**: Keep track of what you've read
+- **Responsive Design**: Optimized for desktop and mobile devices
 
 ## Tech Stack
 
-- **Frontend**: Next.js 15, React 19, TailwindCSS 4
-- **Backend**: Next.js API Routes
+- **Frontend**: Next.js 15, React 19, TailwindCSS 4, Framer Motion
+- **Backend**: Next.js API Routes with App Router
 - **Database**: MongoDB
 - **Authentication**: JWT with bcrypt
 - **State Management**: React Query (TanStack Query)
+- **Content Processing**: RSS Parser, JSDOM, HTML-to-text, TurnDown
+
+## Screenshots
+
+*[Add screenshots here]*
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ and npm/yarn/pnpm/bun
+- Node.js 18.17+ and npm/yarn/pnpm/bun
 - MongoDB (local or remote)
 
 ### Installation
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/rss-reader.git
+git clone https://github.com/Repith/rss-feed-reader
 cd rss-reader
 ```
 
@@ -71,16 +88,49 @@ The project includes Docker configuration for MongoDB:
 docker-compose up -d
 ```
 
+This will start a MongoDB instance with the following credentials:
+- Username: admin
+- Password: password
+- Port: 27017
+
 ## Development
 
 ### Project Structure
 
-- `app/`: Next.js App Router pages and API routes
-- `src/components/`: Reusable React components
-- `src/domain/`: Domain models and repository interfaces
-- `src/application/`: Application services
-- `src/infrastructure/`: Repository implementations
-- `src/lib/`: Utility functions and shared code
+```
+rss-reader/
+├── app/                  # Next.js App Router pages and API routes
+│   ├── api/              # API endpoints
+│   ├── dashboard/        # Dashboard pages
+│   ├── login/            # Authentication pages
+│   └── ...
+├── src/
+│   ├── application/      # Application services
+│   ├── components/       # Reusable React components
+│   ├── domain/           # Domain models and repository interfaces
+│   ├── infrastructure/   # Repository implementations
+│   └── lib/              # Utility functions and shared code
+├── public/               # Static assets
+└── ...
+```
+
+### Key Features Implementation
+
+#### Feed Parsing
+
+The application supports multiple feed formats:
+- Standard RSS
+- Atom feeds
+- Generic XML with fallback parsing
+- HTML content extraction when feed format is not recognized
+
+#### Content Processing
+
+Articles are processed to:
+- Sanitize HTML content
+- Extract plain text for snippets
+- Find featured images
+- Convert to readable format
 
 ### Available Scripts
 
@@ -89,7 +139,29 @@ docker-compose up -d
 - `npm run start`: Start the production server
 - `npm run lint`: Run ESLint to check code quality
 
+## API Endpoints
+
+- `GET /api/feeds`: Get all feeds for the authenticated user
+- `POST /api/feeds`: Add a new feed
+- `GET /api/feeds/:id/articles`: Get articles for a specific feed
+- `POST /api/articles/read`: Mark an article as read/unread
+- `POST /api/articles/favorite`: Mark an article as favorite/unfavorite
+- `GET /api/articles/search`: Search articles
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- [RSS Parser](https://github.com/rbren/rss-parser) for feed parsing
+- [JSDOM](https://github.com/jsdom/jsdom) for HTML processing
+- [TailwindCSS](https://tailwindcss.com/) for styling
+- [Framer Motion](https://www.framer.com/motion/) for animations
+
+
 
