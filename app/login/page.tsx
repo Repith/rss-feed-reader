@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/src/lib/auth-context";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import clsx from "clsx";
 
 export default function LoginPage() {
   const { login, loading, user } = useAuth();
@@ -35,15 +36,28 @@ export default function LoginPage() {
     }
   }
 
+  async function loginAsDemo() {
+    setError("");
+    try {
+      await login("test@test.com", "testtest");
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Demo login failed"
+      );
+    }
+  }
+
   if (user) {
-    return null; // Will redirect in useEffect
+    return null;
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-gray-50 dark:bg-gray-900">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white border rounded-lg shadow-lg dark:bg-gray-800">
+    <div className="flex items-center justify-center min-h-screen pb-28 bg-gray-50 dark:bg-gray-900">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white border border-pink-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
         <div className="text-center">
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Welcome Back
           </h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
@@ -65,7 +79,7 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Email
               </label>
@@ -74,14 +88,18 @@ export default function LoginPage() {
                 name="email"
                 type="email"
                 required
-                className="block w-full p-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:border-gray-700 dark:bg-gray-800"
+                className={clsx(
+                  "block w-full p-3 mt-1 border rounded-md shadow-sm",
+                  "border-gray-300 dark:border-gray-700 dark:bg-gray-800",
+                  "focus:ring-pink-500 focus:border-pink-500"
+                )}
                 placeholder="you@example.com"
               />
             </div>
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Password
               </label>
@@ -90,7 +108,11 @@ export default function LoginPage() {
                 name="password"
                 type="password"
                 required
-                className="block w-full p-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:border-gray-700 dark:bg-gray-800"
+                className={clsx(
+                  "block w-full p-3 mt-1 border rounded-md shadow-sm",
+                  "border-gray-300 dark:border-gray-700 dark:bg-gray-800",
+                  "focus:ring-pink-500 focus:border-pink-500"
+                )}
               />
             </div>
           </div>
@@ -98,16 +120,35 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 text-white rounded-md bg-primary-600 hover:bg-primary-700 disabled:opacity-70"
+            className={clsx(
+              "w-full py-3 text-white rounded-md transition-colors",
+              "bg-gradient-to-r from-pink-600 to-violet-600",
+              "hover:from-pink-700 hover:to-violet-700 hover:shadow-md",
+              "disabled:opacity-70"
+            )}
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>
 
-          <div className="text-sm text-center">
+          <button
+            type="button"
+            onClick={loginAsDemo}
+            disabled={loading}
+            className={clsx(
+              "w-full py-3 mt-3 text-gray-700 rounded-md transition-colors",
+              "bg-gray-100 dark:bg-gray-700 dark:text-gray-200",
+              "hover:bg-gray-200 dark:hover:bg-gray-600 hover:shadow-sm",
+              "disabled:opacity-70"
+            )}
+          >
+            Login as Demo User
+          </button>
+
+          <div className="text-sm text-center text-gray-600 dark:text-gray-400">
             Don&apos;t have an account?{" "}
             <Link
               href="/signup"
-              className="font-medium text-primary-600 hover:underline"
+              className="font-medium text-pink-600 dark:text-pink-400 hover:underline"
             >
               Sign up
             </Link>

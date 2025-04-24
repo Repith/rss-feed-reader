@@ -2,6 +2,7 @@ import { FeedService } from "@/src/application/services/FeedService";
 import { MongoArticleRepository } from "@/src/infrastructure/repositories/MongoArticleRepository";
 import { MongoFeedRepository } from "@/src/infrastructure/repositories/MongoFeedRepository";
 import { RssParserService } from "@/src/infrastructure/services/RssParserService";
+import { decodeJwtWithoutVerify } from "@/src/lib/token";
 import { NextRequest, NextResponse } from "next/server";
 
 const feedRepository = new MongoFeedRepository();
@@ -18,9 +19,20 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const token = request.cookies.get("auth-token")?.value;
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    const decoded = decodeJwtWithoutVerify(token);
+    if (!decoded || !decoded.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    const userId = decoded.userId;
     const params = await context.params;
     const { id } = params;
-    const feed = await feedService.getFeedById(id);
+    const feed = await feedService.getFeedById(id, userId);
     if (!feed) {
       return NextResponse.json(
         { error: "Feed not found" },
@@ -60,8 +72,19 @@ export async function PATCH(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const token = request.cookies.get("auth-token")?.value;
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    const decoded = decodeJwtWithoutVerify(token);
+    if (!decoded || !decoded.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    const userId = decoded.userId;
     const params = await context.params;
-    const feed = await feedService.refreshFeed(params.id);
+    const feed = await feedService.refreshFeed(params.id, userId);
     if (!feed) {
       return NextResponse.json(
         { error: "Feed not found" },
@@ -73,6 +96,41 @@ export async function PATCH(
     console.error('Failed to refresh feed:', err);
     return NextResponse.json(
       { error: "Failed to refresh feed" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const params = await context.params;
+    const { id } = params;
+    const { url, category } = await request.json();
+    
+    if (!url) {
+      return NextResponse.json(
+        { error: "URL is required" },
+        { status: 400 }
+      );
+    }
+    
+    const feed = await feedService.updateFeed(id, { url, category });
+    
+    if (!feed) {
+      return NextResponse.json(
+        { error: "Feed not found" },
+        { status: 404 }
+      );
+    }
+    
+    return NextResponse.json(feed);
+  } catch (err) {
+    console.error('Failed to update feed:', err);
+    return NextResponse.json(
+      { error: "Failed to update feed" },
       { status: 500 }
     );
   }

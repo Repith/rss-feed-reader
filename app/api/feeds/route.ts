@@ -2,7 +2,8 @@ import { FeedService } from "@/src/application/services/FeedService";
 import { MongoArticleRepository } from "@/src/infrastructure/repositories/MongoArticleRepository";
 import { MongoFeedRepository } from "@/src/infrastructure/repositories/MongoFeedRepository";
 import { RssParserService } from "@/src/infrastructure/services/RssParserService";
-import { NextResponse } from "next/server";
+import { decodeJwtWithoutVerify } from "@/src/lib/token";
+import { NextResponse, NextRequest } from "next/server";
 
 const feedRepository = new MongoFeedRepository();
 const articleRepository = new MongoArticleRepository();
@@ -13,41 +14,58 @@ const feedService = new FeedService(
   rssParserService
 );
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const feeds = await feedService.getAllFeeds();
+    const token = request.cookies.get("auth-token")?.value;
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    const decoded = decodeJwtWithoutVerify(token);
+    if (!decoded || !decoded.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    const userId = decoded.userId;
+    const feeds = await feedService.getAllFeeds(userId);
     return NextResponse.json(feeds);
-  } catch (error) {
+  } catch (err) {
+    console.error('Failed to fetch feeds:', err);
     return NextResponse.json(
-      { error: `Failed to fetch feeds, error: ${error}` },
+      { error: "Failed to fetch feeds" },
       { status: 500 }
     );
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const token = request.cookies.get("auth-token")?.value;
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    const decoded = decodeJwtWithoutVerify(token);
+    if (!decoded || !decoded.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    const userId = decoded.userId;
     const { url, category } = await request.json();
+    
     if (!url) {
       return NextResponse.json(
         { error: "URL is required" },
         { status: 400 }
       );
     }
-
-    try {
-      const feed = await feedService.addFeed(url, category);
-      return NextResponse.json(feed, { status: 201 });
-    } catch (feedError) {
-      return NextResponse.json(
-        { error: (feedError as Error)?.message || "Failed to add feed" },
-        { status: 422 }
-      );
-    }
-  } catch (error) {
-    console.error("Server error:", error);
+    
+    const feed = await feedService.addFeed(url, userId, category);
+    return NextResponse.json(feed);
+  } catch (err) {
+    console.error('Failed to add feed:', err);
     return NextResponse.json(
-      { error: "Server error processing request" },
+      { error: (err as Error).message || "Failed to add feed" },
       { status: 500 }
     );
   }

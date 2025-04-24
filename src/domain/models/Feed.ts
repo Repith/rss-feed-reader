@@ -1,5 +1,6 @@
 export interface Feed {
   id: string;
+  userId: string;
   url: string;
   title: string;
   description?: string;
@@ -8,3 +9,5 @@ export interface Feed {
   createdAt: Date;
   updatedAt: Date;
 }
+
+

@@ -42,8 +42,8 @@ export function parseAtomFeed(url: string, xmlContent: string): {
     return {
       feedId: '',
       title,
-      content: sanitizedHtml,
-      snippet: plainText.slice(0, 280),
+      content: sanitizedHtml, 
+      snippet: plainText.slice(0, 400), 
       link,
       publishedAt: pubDate ? new Date(pubDate) : new Date(),
       author,
@@ -63,7 +63,6 @@ export function parseRssFeed(url: string, xmlContent: string): {
   const dom = new JSDOM(xmlContent, { contentType: 'text/xml' });
   const doc = dom.window.document;
   
-  // Extract feed information
   const feedTitle = doc.querySelector('channel > title')?.textContent || 'Unnamed Feed';
   const feedDescription = doc.querySelector('channel > description')?.textContent || '';
   
@@ -74,7 +73,6 @@ export function parseRssFeed(url: string, xmlContent: string): {
     lastFetched: new Date(),
   };
   
-  // Extract items
   const items = Array.from(doc.querySelectorAll('item') || []);
   
   if (!items.length) {
@@ -88,14 +86,12 @@ export function parseRssFeed(url: string, xmlContent: string): {
     const author = item.querySelector('author')?.textContent || 
                   item.querySelector('dc\\:creator')?.textContent || '';
     
-    // Get content - try multiple possible content fields
     const contentEncoded = item.querySelector('content\\:encoded')?.textContent;
     const description = item.querySelector('description')?.textContent;
     const rawContent = contentEncoded || description || '';
     
     const { sanitizedHtml, plainText, firstImage } = processContent(rawContent);
     
-    // Try to get image from media:content or enclosure
     let mediaImage = null;
     const mediaContent = item.querySelector('media\\:content');
     const enclosure = item.querySelector('enclosure');
@@ -111,7 +107,7 @@ export function parseRssFeed(url: string, xmlContent: string): {
       feedId: '',
       title,
       content: sanitizedHtml,
-      snippet: plainText.slice(0, 280),
+      snippet: plainText.slice(0, 400), 
       link,
       publishedAt: pubDate ? new Date(pubDate) : new Date(),
       author,
@@ -125,10 +121,13 @@ export function parseRssFeed(url: string, xmlContent: string): {
 }
 
 export function createFallbackArticle(url: string, content?: string): Omit<Article, "id" | "createdAt">[] {
+  const plainText = content ? content.replace(/<[^>]*>/g, "") : "Could not parse content from this feed. Please check the URL.";
+  
   return [{
     feedId: "",
     title: "Content from " + new URL(url).hostname,
     content: content || "Could not parse content from this feed. Please check the URL.",
+    snippet: plainText.slice(0, 400), 
     link: url,
     publishedAt: new Date(),
     author: "",
@@ -136,3 +135,7 @@ export function createFallbackArticle(url: string, content?: string): Omit<Artic
     isFavorite: false,
   }];
 }
+
+
+
+

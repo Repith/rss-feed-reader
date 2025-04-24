@@ -112,7 +112,7 @@ export class RssParserService {
         feedId: "",
         title: item.title || "Untitled",
         content: sanitizedHtml,
-        snippet: plainText.slice(0, 280),
+        snippet: plainText.slice(0, 400), // Create a 400 character snippet
         link: item.link || "",
         publishedAt: item.pubDate ? new Date(item.pubDate) : new Date(),
         author: item.creator || item.author || (item.dc && item.dc.creator) || "",
@@ -180,7 +180,7 @@ export class RssParserService {
           feedId: '',
           title,
           content: sanitizedHtml,
-          snippet: plainText.slice(0, 280),
+          snippet: plainText.slice(0, 400), // Create a 400 character snippet
           link,
           publishedAt: pubDate ? new Date(pubDate) : new Date(),
           author,
@@ -227,13 +227,13 @@ export class RssParserService {
           const articleLink = article.querySelector('a')?.getAttribute('href') || '';
           const fullLink = articleLink.startsWith('http') ? articleLink : new URL(articleLink, url).href;
           
-          const { sanitizedHtml } = processContent(article.innerHTML);
-          
+          const { sanitizedHtml, plainText } = processContent(article.innerHTML);
           
           articles.push({
             feedId: '',
             title: articleTitle,
             content: sanitizedHtml,
+            snippet: plainText.slice(0, 400), 
             link: fullLink,
             publishedAt: new Date(),
             author: '',
@@ -248,12 +248,13 @@ export class RssParserService {
                            doc.body;
         
         if (mainContent) {
-          const { sanitizedHtml } = processContent(mainContent.innerHTML);
+          const { sanitizedHtml, plainText } = processContent(mainContent.innerHTML);
           
           articles.push({
             feedId: '',
             title,
             content: sanitizedHtml,
+            snippet: plainText.slice(0, 400),
             link: url,
             publishedAt: new Date(),
             author: '',

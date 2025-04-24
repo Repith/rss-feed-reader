@@ -13,6 +13,8 @@ import { CodeIcon } from "./CodeIcon";
 import { ChevronDownIcon } from "./ChevronDownIcon";
 import { ChevronUpIcon } from "./ChevronUpIcon";
 import { DoorArrowLeft } from "./DoorArrowLeft";
+import { SearchIcon } from "./SearchIcon";
+import { FilterIcon } from "./FilterIcon";
 
 const iconComponents = {
   sun: SunIcon,
@@ -30,6 +32,8 @@ const iconComponents = {
   chevronDown: ChevronDownIcon,
   chevronUp: ChevronUpIcon,
   doorArrowLeft: DoorArrowLeft,
+  search: SearchIcon,
+  filter: FilterIcon,
 } as const;
 
 export type IconName = keyof typeof iconComponents;

@@ -10,11 +10,11 @@ interface MongoFeed extends Omit<Feed, "id"> {
 export class MongoFeedRepository implements FeedRepository {
   private collectionName = "feeds";
 
-  async findAll(): Promise<Feed[]> {
+  async findAll(userId: string): Promise<Feed[]> {
     const { db } = await connectToDatabase();
     const feeds = await db
       .collection<MongoFeed>(this.collectionName)
-      .find()
+      .find({ userId })
       .toArray();
 
     return feeds.map((feed) => ({
@@ -24,11 +24,11 @@ export class MongoFeedRepository implements FeedRepository {
     })) as Feed[];
   }
 
-  async findById(id: string): Promise<Feed | null> {
+  async findById(id: string, userId: string): Promise<Feed | null> {
     const { db } = await connectToDatabase();
     const feed = await db
       .collection<MongoFeed>(this.collectionName)
-      .findOne({ _id: new ObjectId(id) });
+      .findOne({ _id: new ObjectId(id), userId });
 
     if (!feed) return null;
 

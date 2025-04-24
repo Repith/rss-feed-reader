@@ -10,15 +10,15 @@ export class FeedService {
     private rssParserService: RssParserService
   ) {}
 
-  async getAllFeeds(): Promise<Feed[]> {
-    return this.feedRepository.findAll();
+  async getAllFeeds(userId: string): Promise<Feed[]> {
+    return this.feedRepository.findAll(userId);
   }
 
-  async getFeedById(id: string): Promise<Feed | null> {
-    return this.feedRepository.findById(id);
+  async getFeedById(id: string, userId: string): Promise<Feed | null> {
+    return this.feedRepository.findById(id, userId);
   }
 
-  async addFeed(url: string, category?: string): Promise<Feed> {
+  async addFeed(url: string, userId: string, category?: string): Promise<Feed> {
     try {
       // Normalize URL (add https:// if missing)
       if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -29,6 +29,7 @@ export class FeedService {
 
       const createdFeed = await this.feedRepository.create({
         url,
+        userId,
         title: feed.title || "Unnamed Feed",
         description: feed.description || "",
         category,
@@ -42,6 +43,7 @@ export class FeedService {
           batch.map(article => 
             this.articleRepository.saveArticle({
               ...article,
+              userId,
               feedId: createdFeed.id,
             })
           )
@@ -62,16 +64,17 @@ export class FeedService {
     return this.feedRepository.update(id, data);
   }
 
-  async refreshFeed(id: string): Promise<Feed | null> {
-    const feed = await this.feedRepository.findById(id);
+  async refreshFeed(id: string, userId: string): Promise<Feed | null> {
+    const feed = await this.feedRepository.findById(id, userId);
     if (!feed) return null;
 
     const { articles } =
       await this.rssParserService.parseFeed(feed.url);
 
     for (const article of articles) {
-      await this.articleRepository.create({
+      await this.articleRepository.saveArticle({
         ...article,
+        userId: feed.userId,
         feedId: feed.id,
       });
     }
