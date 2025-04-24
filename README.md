@@ -33,14 +33,12 @@ Check out the live demo: [RSS Reader](https://rss-feed-reader-beta.vercel.app)
 ## Screenshots
 
 <div align="center">
-  <img src="public/rss1.png" alt="RSS Reader Dashboard" width="800"/>
-  <p><em>Dashboard view showing feed management</em></p>
+  <img src="public/rss1.png" alt="RSS Reader Dashboard" width="650"/>
   
-  <img src="public/rss2.png" alt="RSS Reader Articles" width="800"/>
-  <p><em>Article reading experience</em></p>
+  <img src="public/rss2.png" alt="RSS Reader Articles" width="650"/>
+
+  <img src="public/rss3.png" alt="RSS Reader Mobile" width="650"/>
   
-  <img src="public/rss3.png" alt="RSS Reader Mobile" width="800"/>
-  <p><em>Mobile responsive design</em></p>
 </div>
 
 ## Getting Started
