@@ -32,7 +32,16 @@ Check out the live demo: [RSS Reader](https://rss-feed-reader-beta.vercel.app)
 
 ## Screenshots
 
-*[Add screenshots here]*
+<div align="center">
+  <img src="public/rss1.png" alt="RSS Reader Dashboard" width="800"/>
+  <p><em>Dashboard view showing feed management</em></p>
+  
+  <img src="public/rss2.png" alt="RSS Reader Articles" width="800"/>
+  <p><em>Article reading experience</em></p>
+  
+  <img src="public/rss3.png" alt="RSS Reader Mobile" width="800"/>
+  <p><em>Mobile responsive design</em></p>
+</div>
 
 ## Getting Started
 
@@ -162,6 +171,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [JSDOM](https://github.com/jsdom/jsdom) for HTML processing
 - [TailwindCSS](https://tailwindcss.com/) for styling
 - [Framer Motion](https://www.framer.com/motion/) for animations
+
 
 
 
