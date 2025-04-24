@@ -1,10 +1,9 @@
 "use client";
 
+import { ThemeProvider } from "@/src/components/ThemeProvider";
 import { AuthProvider } from "@/src/lib/auth-context";
-import { queryClient } from "@/src/lib/query-client";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { LayoutWrapper } from "@/src/components/LayoutWrapper";
+import { queryClient } from "@/src/lib/query-client";
 
 export function Providers({
   children,
@@ -12,11 +11,12 @@ export function Providers({
   children: React.ReactNode;
 }) {
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <LayoutWrapper>{children}</LayoutWrapper>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
