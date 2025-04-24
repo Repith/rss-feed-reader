@@ -27,7 +27,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { url } = await request.json();
+    const { url, category } = await request.json();
     if (!url) {
       return NextResponse.json(
         { error: "URL is required" },
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     }
 
     try {
-      const feed = await feedService.addFeed(url);
+      const feed = await feedService.addFeed(url, category);
       return NextResponse.json(feed, { status: 201 });
     } catch (feedError) {
       return NextResponse.json(

@@ -5,10 +5,14 @@ import { useAuth } from "@/src/lib/auth-context";
 import { useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 import clsx from "clsx";
+import { usePathname } from "next/navigation";
 
 export function Navbar() {
   const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isActive = (path: string) => pathname === path;
 
   return (
     <header
@@ -18,31 +22,17 @@ export function Navbar() {
         "border-pink-200 dark:border-gray-800"
       )}
     >
-      <div className="container px-4 py-3 mx-auto">
-        <div className="flex items-center justify-between">
+      <div className="container flex items-center justify-between h-16 px-4 mx-auto">
+        <div className="flex items-center">
           <Link
             href="/"
-            className="flex items-center space-x-2"
+            className="text-xl font-bold text-pink-600 dark:text-pink-400"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-6 h-6 text-pink-600"
-            >
-              <path d="M4 11a9 9 0 0 1 9 9" />
-              <path d="M4 4a16 16 0 0 1 16 16" />
-              <circle cx="5" cy="19" r="1" />
-            </svg>
-            <span className="text-xl font-bold text-transparent bg-gradient-to-r from-pink-600 to-violet-600 bg-clip-text">
-              RSS Reader
-            </span>
+            RSS Reader
           </Link>
+        </div>
 
+        <div className="flex items-center">
           {/* Desktop Navigation */}
           <nav className="items-center hidden space-x-6 md:flex">
             <ThemeToggle />
@@ -53,10 +43,24 @@ export function Navbar() {
                   className={clsx(
                     "transition-colors",
                     "text-gray-700 dark:text-gray-300",
-                    "hover:text-pink-600 dark:hover:text-pink-400"
+                    "hover:text-pink-600 dark:hover:text-pink-400",
+                    isActive("/dashboard") &&
+                      "text-pink-600 dark:text-pink-400 font-medium"
                   )}
                 >
-                  Dashboard
+                  All Feeds
+                </Link>
+                <Link
+                  href="/dashboard/favorites"
+                  className={clsx(
+                    "transition-colors",
+                    "text-gray-700 dark:text-gray-300",
+                    "hover:text-pink-600 dark:hover:text-pink-400",
+                    isActive("/dashboard/favorites") &&
+                      "text-pink-600 dark:text-pink-400 font-medium"
+                  )}
+                >
+                  Favorites
                 </Link>
                 <button
                   onClick={() => logout()}
@@ -96,67 +100,43 @@ export function Navbar() {
             )}
           </nav>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile menu button */}
           <button
-            className="md:hidden"
+            className="p-2 md:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
+              className="w-6 h-6 text-gray-700 dark:text-gray-300"
               fill="none"
               viewBox="0 0 24 24"
-              strokeWidth={1.5}
               stroke="currentColor"
-              className="w-6 h-6"
             >
               {isMenuOpen ? (
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  strokeWidth={2}
                   d="M6 18L18 6M6 6l12 12"
                 />
               ) : (
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
                 />
               )}
             </svg>
           </button>
         </div>
+      </div>
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div
-            className={clsx(
-              "py-4 mt-4 border-t md:hidden",
-              "border-gray-200 dark:border-gray-800"
-            )}
-          >
-            <nav className="flex flex-col space-y-4">
-              <Link
-                href="/#features"
-                className={clsx(
-                  "transition-colors",
-                  "text-gray-700 dark:text-gray-300",
-                  "hover:text-pink-600 dark:hover:text-pink-400"
-                )}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Features
-              </Link>
-              <Link
-                href="/#pricing"
-                className={clsx(
-                  "transition-colors",
-                  "text-gray-700 dark:text-gray-300",
-                  "hover:text-pink-600 dark:hover:text-pink-400"
-                )}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Pricing
-              </Link>
+      {/* Mobile menu */}
+      {isMenuOpen && (
+        <div className="md:hidden">
+          <div className="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200 dark:border-gray-700">
+            <nav className="flex flex-col p-4 space-y-3">
               {user ? (
                 <>
                   <Link
@@ -164,11 +144,26 @@ export function Navbar() {
                     className={clsx(
                       "transition-colors",
                       "text-gray-700 dark:text-gray-300",
-                      "hover:text-pink-600 dark:hover:text-pink-400"
+                      "hover:text-pink-600 dark:hover:text-pink-400",
+                      isActive("/dashboard") &&
+                        "text-pink-600 dark:text-pink-400 font-medium"
                     )}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Dashboard
+                    All Feeds
+                  </Link>
+                  <Link
+                    href="/dashboard/favorites"
+                    className={clsx(
+                      "transition-colors",
+                      "text-gray-700 dark:text-gray-300",
+                      "hover:text-pink-600 dark:hover:text-pink-400",
+                      isActive("/dashboard/favorites") &&
+                        "text-pink-600 dark:text-pink-400 font-medium"
+                    )}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Favorites
                   </Link>
                   <button
                     onClick={() => {
@@ -219,8 +214,8 @@ export function Navbar() {
               </div>
             </nav>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </header>
   );
 }

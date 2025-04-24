@@ -20,8 +20,8 @@ export const feedsApi = {
     return response.data;
   },
 
-  add: async (url: string): Promise<Feed> => {
-    const response = await api.post("/feeds", { url });
+  add: async (data: { url: string, category?: string }): Promise<Feed> => {
+    const response = await api.post("/feeds", data);
     return response.data;
   },
 

@@ -18,7 +18,7 @@ export class FeedService {
     return this.feedRepository.findById(id);
   }
 
-  async addFeed(url: string): Promise<Feed> {
+  async addFeed(url: string, category?: string): Promise<Feed> {
     try {
       // Normalize URL (add https:// if missing)
       if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -31,6 +31,7 @@ export class FeedService {
         url,
         title: feed.title || "Unnamed Feed",
         description: feed.description || "",
+        category,
         lastFetched: new Date(),
       });
 
